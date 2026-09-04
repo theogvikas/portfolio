@@ -1,31 +1,1013 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vikas Kumar � Portfolio</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 40px; background: #0b0f19; color: #e2e8f0; line-height: 1.6; }
-        .container { max-width: 800px; margin: auto; }
-        h1 { color: #38bdf8; font-size: 2.5rem; margin-bottom: 5px; }
-        .subtitle { color: #94a3b8; font-size: 1.2rem; margin-bottom: 30px; }
-        .project { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; margin-top: 20px; }
-        .project h2 { color: #f8fafc; margin-top: 0; }
-        .tag { display: inline-block; background: #0369a1; color: #e0f2fe; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; margin-right: 8px; margin-top: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vikas Kumar — Web Application Developer</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #070B09;
+      --bg-card: rgba(15, 23, 20, 0.70);
+      --bg-card-hover: rgba(22, 34, 29, 0.88);
+      --ink: #ECF1ED;
+      --ink-soft: #8E9B94;
+      --accent: #E5A93C;
+      --accent-glow: rgba(229, 169, 60, 0.28);
+      --emerald: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.18);
+      --line: rgba(236, 241, 237, 0.08);
+      --line-bright: rgba(229, 169, 60, 0.35);
+      
+      --font-display: 'Playfair Display', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body.combat-mode {
+      --bg: #0C0607;
+      --bg-card: rgba(28, 14, 16, 0.70);
+      --bg-card-hover: rgba(42, 20, 23, 0.88);
+      --accent: #EF4444;
+      --accent-glow: rgba(239, 68, 68, 0.32);
+      --emerald: #F59E0B;
+      --emerald-glow: rgba(245, 158, 11, 0.2);
+      --line-bright: rgba(239, 68, 68, 0.4);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.7;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    @media (min-width: 900px) {
+      body { cursor: none; }
+      a, button, input, .tilt-card, .mode-btn, .audio-btn { cursor: none; }
+      
+      .cursor-dot {
+        width: 8px; height: 8px;
+        background-color: var(--accent);
+        position: fixed; top: 0; left: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        transition: transform 0.1s ease, background-color 0.3s ease;
+      }
+      
+      .cursor-outline {
+        width: 36px; height: 36px;
+        border: 1px solid var(--accent);
+        position: fixed; top: 0; left: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9998;
+        transform: translate(-50%, -50%);
+        transition: width 0.25s ease, height 0.25s ease, border-color 0.3s ease;
+      }
+
+      body.hovering .cursor-dot { transform: translate(-50%, -50%) scale(2); background-color: var(--emerald); }
+      body.hovering .cursor-outline { width: 56px; height: 56px; border-color: var(--emerald); }
+    }
+
+    #webgl-bg {
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: -1; pointer-events: none;
+    }
+
+    .glow-1 {
+      position: fixed; top: 10%; left: 15%; width: 550px; height: 550px;
+      background: radial-gradient(circle, var(--emerald-glow) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none; z-index: -1; filter: blur(70px);
+    }
+    .glow-2 {
+      position: fixed; bottom: 10%; right: 10%; width: 650px; height: 650px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0,0,0,0) 70%);
+      pointer-events: none; z-index: -1; filter: blur(90px);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+    header {
+      position: sticky; top: 0; z-index: 80;
+      background: rgba(7, 11, 9, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+    }
+    nav.wrap { display: flex; align-items: center; justify-content: space-between; height: 84px; }
+    .brand { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; }
+    .brand .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: inline-block; box-shadow: 0 0 10px var(--accent); }
+    
+    .navlinks { display: flex; gap: 24px; list-style: none; align-items: center; font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; }
+    .navlinks a { color: var(--ink-soft); transition: all 0.3s; }
+    .navlinks a:hover { color: var(--ink); }
+    
+    .controls-group { display: flex; align-items: center; gap: 10px; }
+    
+    .mode-btn, .audio-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line-bright);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 0.72rem; padding: 6px 12px; border-radius: 20px;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
+
+    .hero { padding: 90px 0 80px; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
+    
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 6px 16px; border-radius: 30px; background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25); font-family: var(--font-mono); font-size: 0.75rem;
+      color: var(--emerald); margin-bottom: 28px;
+    }
+    .pulse-dot { width: 6px; height: 6px; background: var(--emerald); border-radius: 50%; box-shadow: 0 0 8px var(--emerald); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+
+    .text-mask { overflow: hidden; display: block; }
+    
+    h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.1; }
+    h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+    
+    .hero-sub { margin-top: 24px; max-width: 50ch; font-size: 1.05rem; color: var(--ink-soft); font-weight: 300; }
+    
+    .hero-actions { margin-top: 36px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    
+    .btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--bg); background: var(--accent); padding: 16px 26px; border-radius: 6px;
+      font-weight: 700; transition: all 0.3s; box-shadow: 0 8px 25px var(--accent-glow); border: none; cursor: pointer;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(229, 169, 60, 0.4); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink); border: 1px solid var(--line-bright); padding: 16px 22px; border-radius: 6px;
+      transition: all 0.3s; background: rgba(255,255,255,0.03); cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: rgba(229, 169, 60, 0.08); }
+
+    .hero-visual { display: flex; flex-direction: column; gap: 24px; }
+    
+    .badge-card {
+      background: var(--bg-card); border: 1px solid var(--line-bright);
+      border-radius: 20px; padding: 28px; backdrop-filter: blur(20px);
+    }
+    .badge-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+    .badge-icon { font-size: 1.8rem; }
+    .badge-title { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; }
+    .badge-subheading { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 6px; font-weight: 500; }
+    .badge-text { color: var(--ink-soft); font-size: 0.88rem; margin-bottom: 16px; }
+
+    .karate-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+    .k-stat { background: rgba(255,255,255,0.03); border: 1px solid var(--line); padding: 14px; border-radius: 12px; }
+    .k-stat .num { font-family: var(--font-display); font-size: 1.3rem; color: var(--ink); font-weight: 700; }
+    .k-stat .label { font-family: var(--font-mono); font-size: 0.68rem; color: var(--emerald); text-transform: uppercase; margin-top: 4px; }
+
+    .terminal-card {
+      background: var(--bg-card); border: 1px solid var(--line); border-radius: 16px;
+      padding: 20px; backdrop-filter: blur(20px); font-family: var(--font-mono); font-size: 0.8rem;
+    }
+    .terminal-head { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 14px; }
+    .term-dots { display: flex; gap: 8px; }
+    .term-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #FF5F56; } .dot-yellow { background: #FFBD2E; } .dot-green { background: #27C93F; }
+    .term-title { color: var(--ink-soft); font-size: 0.7rem; }
+    .terminal-body { color: var(--ink-soft); min-height: 130px; max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; justify-content: space-between; }
+    .term-line { margin-bottom: 8px; word-break: break-word; }
+    .term-line span.cmd { color: var(--accent); }
+    .term-line span.val { color: var(--emerald); }
+    .term-help { color: var(--ink-soft); margin-top: 6px; }
+    .accent-text { color: var(--accent); }
+    .term-input-line { display: flex; align-items: center; gap: 8px; margin-top: 10px; color: var(--accent); }
+    .term-input { background: transparent; border: none; outline: none; color: var(--ink); font-family: var(--font-mono); font-size: 0.8rem; width: 100%; }
+
+    section { padding: 80px 0; border-top: 1px solid var(--line); }
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 40px; }
+    .sec-num { font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
+    h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.8rem, 3.5vw, 2.8rem); }
+
+    .glass-card {
+      background: var(--bg-card); border: 1px solid var(--line); border-radius: 16px;
+      backdrop-filter: blur(16px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      background: var(--bg-card-hover); border-color: var(--line-bright);
+      transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .arch-visualizer {
+      background: rgba(0,0,0,0.4); border: 1px solid var(--line); border-radius: 12px;
+      padding: 24px; margin: 24px 0; font-family: var(--font-mono);
+    }
+    .arch-flow { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .arch-node {
+      background: var(--bg-card); border: 1px solid var(--line-bright);
+      padding: 12px 18px; border-radius: 8px; font-size: 0.78rem; text-align: center;
+      cursor: pointer; transition: all 0.3s ease; flex: 1; min-width: 120px;
+    }
+    .arch-node:hover, .arch-node.active { background: var(--accent); color: var(--bg); font-weight: 700; }
+    .arch-arrow { color: var(--accent); font-weight: bold; }
+    .arch-output { margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 0.75rem; color: var(--emerald); }
+
+    .about-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; }
+    .about-text p { color: var(--ink-soft); font-size: 1.05rem; margin-bottom: 24px; font-weight: 300; }
+    .about-text p span { color: var(--ink); font-weight: 500; }
+    .stat-card { padding: 24px; margin-bottom: 20px; }
+    .stat-label { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .stat-val { font-size: 1.05rem; font-weight: 600; color: var(--ink); }
+
+    .skills-category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+    .skill-cat-card { padding: 28px; }
+    .skill-cat-title { font-family: var(--font-mono); font-size: 0.82rem; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; letter-spacing: 0.05em; }
+    .skill-tags-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .skill-pill {
+      font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink);
+      background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+      padding: 8px 14px; border-radius: 8px; transition: all 0.25s ease;
+    }
+    .skill-pill:hover { border-color: var(--accent); color: var(--accent); background: rgba(229, 169, 60, 0.08); }
+
+    .project { padding: 36px; margin-bottom: 32px; position: relative; overflow: hidden; }
+    .project-badge { position: absolute; top: 0; right: 0; background: var(--accent); color: var(--bg); font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; padding: 6px 16px; border-bottom-left-radius: 12px; text-transform: uppercase; }
+    .project-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .project-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 500; }
+    .project-date { font-family: var(--font-mono); font-size: 0.8rem; color: var(--emerald); }
+    .project-desc { color: var(--ink-soft); font-size: 1rem; margin-bottom: 24px; max-width: 80ch; }
+    .project-list { list-style: none; margin-bottom: 28px; }
+    .project-list li { position: relative; padding-left: 24px; margin-bottom: 12px; color: var(--ink-soft); font-size: 0.95rem; }
+    .project-list li::before { content: "◆"; position: absolute; left: 0; color: var(--accent); font-size: 0.7rem; top: 2px; }
+    
+    .project-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .project-actions { display: flex; gap: 12px; }
+    .project-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase;
+      color: var(--ink); border: 1px solid var(--line); padding: 8px 16px; border-radius: 6px; transition: all 0.3s;
+    }
+    .project-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(229, 169, 60, 0.05); }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tag { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; color: var(--accent); background: rgba(229, 169, 60, 0.08); border: 1px solid rgba(229, 169, 60, 0.2); padding: 6px 14px; border-radius: 20px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .card-content { padding: 32px; }
+    .card-eyebrow { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+    .card-content h3 { font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 8px; font-weight: 500; }
+    .card-content .sub { color: var(--emerald); font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 16px; }
+    .card-content p { color: var(--ink-soft); font-size: 0.95rem; }
+
+    .contact-box { padding: 60px 28px; text-align: center; background: radial-gradient(circle at center, rgba(229, 169, 60, 0.08) 0%, var(--bg-card) 70%); border-radius: 24px; }
+    .contact-desc { color: var(--ink-soft); margin-top: 12px; max-width: 50ch; margin-left: auto; margin-right: auto; }
+    .contact-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 36px; }
+
+    footer { border-top: 1px solid var(--line); padding: 32px 0; font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-soft); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+
+    #printable-resume { display: none; }
+
+    @media print {
+      @page {
+        size: letter portrait;
+        margin: 0 !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #111111 !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      header, main, footer, canvas, .glow-1, .glow-2, .cursor-dot, .cursor-outline {
+        display: none !important;
+      }
+
+      #printable-resume {
+        display: block !important;
+        visibility: visible !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        padding: 0.4in 0.5in !important;
+        color: #111111 !important;
+        background: #ffffff !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+        box-sizing: border-box !important;
+      }
+
+      .res-header {
+        text-align: center;
+        border-bottom: 1.5pt solid #111111;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+      }
+
+      .res-header h1 {
+        font-size: 16pt;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin: 0 0 2px 0;
+        color: #111111;
+      }
+
+      .res-contact {
+        font-size: 8.5pt;
+        color: #333333;
+      }
+
+      .res-section {
+        margin-bottom: 8px;
+      }
+
+      .res-section h2 {
+        font-size: 9.5pt;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-bottom: 1pt solid #333333;
+        margin: 0 0 4px 0;
+        padding-bottom: 1px;
+        color: #111111;
+      }
+
+      .res-p, .res-item {
+        font-size: 8.2pt;
+        line-height: 1.25;
+        color: #222222;
+        margin-bottom: 3px;
+      }
+
+      .res-item-head {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+      }
+
+      .res-list {
+        margin: 2px 0 6px 14px;
+        padding: 0;
+      }
+
+      .res-list li {
+        font-size: 8.2pt;
+        line-height: 1.25;
+        margin-bottom: 2px;
+        color: #222222;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .wrap { padding: 0 20px; }
+      nav.wrap { height: 70px; }
+      .navlinks { display: none; }
+      .hero { grid-template-columns: 1fr; padding: 40px 0 60px; gap: 36px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+      .about-grid { grid-template-columns: 1fr; gap: 24px; }
+      .two-col { grid-template-columns: 1fr; gap: 16px; }
+      section { padding: 60px 0; }
+      .project { padding: 28px 20px; }
+      .project-badge { position: relative; display: inline-block; border-radius: 4px; margin-bottom: 16px; }
+      .project-footer { flex-direction: column; align-items: flex-start; }
+      .skills-category-grid { grid-template-columns: 1fr; }
+      .card-content { padding: 24px; }
+      .karate-stats { grid-template-columns: 1fr; }
+      .arch-flow { flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Vikas Kumar</h1>
-        <div class="subtitle">Software Engineer & Web Developer</div>
+
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-outline" id="cursorOutline"></div>
+
+  <canvas id="webgl-bg"></canvas>
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+
+  <header>
+    <nav class="wrap">
+      <a href="#" class="brand"><span class="dot"></span> VIKAS KUMAR</a>
+      
+      <div class="controls-group">
+        <button class="mode-btn" id="modeToggle" aria-label="Toggle Narrative Mode">
+          <span id="modeIcon">⚡</span> <span id="modeText">Code Mode</span>
+        </button>
+
+        <button class="audio-btn" id="audioToggle" aria-label="Toggle Sound Effects">
+          <span id="audioIcon">🔇</span> SFX
+        </button>
+      </div>
+
+      <ul class="navlinks">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#credentials">Credentials</a></li>
+        <li><a href="#karate">Martial Arts</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero wrap">
+      <div>
+        <div class="status-badge"><span class="pulse-dot"></span> Available for Web Systems & Engineering Roles</div>
+        <span class="text-mask">
+          <h1 class="reveal-text" id="heroHeading">Precision engineering meets <em>athletic discipline.</em></h1>
+        </span>
+        <p class="hero-sub" id="heroSub">Full-Stack Systems Developer & Platform Engineer specializing in Next.js, Node.js, and Distributed API Architecture.</p>
         
-        <div class="project">
-            <h2>Edge API Gateway</h2>
-            <p>A high-performance, low-latency edge-based API gateway designed for secure request routing, rate limiting, and real-time payload inspection.</p>
-            <span class="tag">JavaScript / Node.js</span>
-            <span class="tag">Edge Computing</span>
-            <span class="tag">API Security</span>
+        <div class="hero-actions">
+          <a class="btn-primary" href="#projects">View Selected Work ↓</a>
+          
+          <button class="btn-secondary" onclick="window.print()">
+            📄 Print / Save Resume PDF
+          </button>
+          
+          <a class="btn-secondary" href="https://github.com/theogvikas" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="badge-card tilt-card">
+          <div class="badge-header">
+            <span class="badge-title">Distinction & Leadership</span>
+            <span class="badge-icon" aria-hidden="true">🥋</span>
+          </div>
+          <h2 class="badge-subheading">Black Belt & Gold Medalist</h2>
+          <p class="badge-text">Secretary, Buxar Karate Association. Channeling elite athletic discipline into reliable systems architecture.</p>
+          
+          <div class="karate-stats">
+            <div class="k-stat">
+              <div class="num">2018</div>
+              <div class="label">Open National Champion</div>
+            </div>
+            <div class="k-stat">
+              <div class="num">1st Dan</div>
+              <div class="label">Black Belt</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-card tilt-card">
+          <div class="terminal-head">
+            <div class="term-dots">
+              <div class="term-dot dot-red"></div>
+              <div class="term-dot dot-yellow"></div>
+              <div class="term-dot dot-green"></div>
+            </div>
+            <div class="term-title">system_shell_v2.6.exe</div>
+          </div>
+          <div class="terminal-body" id="termBody">
+            <div id="termLogs">
+              <div class="term-line">&gt; init <span class="cmd">developer_profile</span></div>
+              <div class="term-line">&gt; github: <span class="val">"theogvikas"</span></div>
+              <div class="term-line">&gt; location: <span class="val">"Buxar, India"</span></div>
+              <div class="term-line">&gt; stack: <span class="val">["Next.js", "Node.js", "Express", "TS"]</span></div>
+              <div class="term-line term-help">Type <span class="accent-text">help</span> or <span class="accent-text">github</span> for live API telemetry.</div>
+            </div>
+            <div class="term-input-line">
+              <span>$</span>
+              <input type="text" class="term-input" id="termInput" placeholder="type a command..." aria-label="Terminal input" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="text-mask"><h2 class="reveal-text">About Profile</h2></span>
+          <span class="sec-num">01 / BACKGROUND</span>
+        </div>
+        <div class="about-grid">
+          <div class="about-text">
+            <p>I am a full-stack systems developer driven by structure, clarity, and performance execution. Skilled in Next.js, Node.js, Express, and modern TypeScript architectures, I engineer applications that balance clean responsive UI with secure back-end routing.</p>
+            <p>Currently focused on building production-grade distributed architectures like <span>Edge API Gateways</span> and <span>multi-tenant caching proxies</span>, delivering real-time telemetry, API key isolation, and secure payload inspection.</p>
+          </div>
+          <div>
+            <div class="glass-card stat-card tilt-card">
+              <div class="stat-label">Formal Education</div>
+              <div class="stat-val">BCA, Computer Applications — IGNOU (2022–2025)</div>
+            </div>
+            <div class="glass-card stat-card tilt-card">
+              <div class="stat-label">Primary Engagement</div>
+              <div class="stat-val">Edge API Gateway & Distributed Routing Hub</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="text-mask"><h2 class="reveal-text">Technical Capabilities</h2></span>
+          <span class="sec-num">02 / STACK</span>
+        </div>
+        
+        <div class="skills-category-grid">
+          <div class="glass-card skill-cat-card tilt-card">
+            <div class="skill-cat-title">Core Architecture & Backend</div>
+            <div class="skill-tags-group">
+              <span class="skill-pill">Node.js</span>
+              <span class="skill-pill">Express.js</span>
+              <span class="skill-pill">Next.js (App Router)</span>
+              <span class="skill-pill">TypeScript</span>
+              <span class="skill-pill">RESTful APIs</span>
+            </div>
+          </div>
+
+          <div class="glass-card skill-cat-card tilt-card">
+            <div class="skill-cat-title">Security, State & Real-Time</div>
+            <div class="skill-tags-group">
+              <span class="skill-pill">API Key Authentication</span>
+              <span class="skill-pill">Workspace Isolation</span>
+              <span class="skill-pill">Socket.IO</span>
+              <span class="skill-pill">Redux Toolkit</span>
+              <span class="skill-pill">MongoDB</span>
+            </div>
+          </div>
+
+          <div class="glass-card skill-cat-card tilt-card">
+            <div class="skill-cat-title">UI Engineering & DevOps</div>
+            <div class="skill-tags-group">
+              <span class="skill-pill">Tailwind CSS</span>
+              <span class="skill-pill">Vercel & Render</span>
+              <span class="skill-pill">Git / GitHub</span>
+              <span class="skill-pill">Recharts Data Vis</span>
+              <span class="skill-pill">Telemetry Logging</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="text-mask"><h2 class="reveal-text">Featured Work</h2></span>
+          <span class="sec-num">03 / PROJECTS</span>
+        </div>
+
+        <div class="glass-card project tilt-card">
+          <div class="project-badge">PRODUCTION DEPLOYED</div>
+          <div class="project-head">
+            <h3 class="project-title">Edge API Gateway</h3>
+            <div class="project-date">2026 — Present</div>
+          </div>
+          <p class="project-desc">Enterprise multi-tenant routing and security control hub featuring live payload inspection, API key validation, and real-time telemetry metrics.</p>
+          
+          <div class="arch-visualizer">
+            <div style="font-size: 0.72rem; color: var(--accent); margin-bottom: 12px; text-transform: uppercase;">Interactive Gateway Simulator (Click Nodes)</div>
+            <div class="arch-flow">
+              <div class="arch-node active" onclick="simulateArch('client')">Next.js UI</div>
+              <div class="arch-arrow">➔</div>
+              <div class="arch-node" onclick="simulateArch('gateway')">API Gateway</div>
+              <div class="arch-arrow">➔</div>
+              <div class="arch-node" onclick="simulateArch('auth')">Header Auth</div>
+              <div class="arch-arrow">➔</div>
+              <div class="arch-node" onclick="simulateArch('telemetry')">Node Telemetry</div>
+            </div>
+            <div class="arch-output" id="archOutput">Status: Gateway pipeline active. Send authenticated request from Vercel interface to inspect live payload.</div>
+          </div>
+
+          <ul class="project-list">
+            <li>Engineered a decoupled systems architecture utilizing Next.js App Router on Vercel and a secure Node.js/Express backend on Render.</li>
+            <li>Implemented multi-tenant workspace isolation with strict header-based API key validation (X-API-Key).</li>
+            <li>Developed structured request logging, dynamic quotas, and custom health check monitoring endpoints (`/api/metrics`).</li>
+            <li>Deployed live control panel UI allowing real-time request inspection, latency tracking, and preset tenant configuration.</li>
+          </ul>
+          <div class="project-footer">
+            <div class="tags">
+              <span class="tag">Next.js</span> <span class="tag">Node.js</span> <span class="tag">Express</span> <span class="tag">Tailwind CSS</span> <span class="tag">REST APIs</span>
+            </div>
+            <div class="project-actions">
+              <a class="project-btn" href="https://edge-api-gateway-pi.vercel.app" target="_blank" rel="noopener">Live Demo ↗</a>
+              <a class="project-btn" href="https://github.com/theogvikas/edge-api-gateway" target="_blank" rel="noopener">View Source ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card project tilt-card">
+          <div class="project-head">
+            <h3 class="project-title">API Cache Proxy Platform</h3>
+            <div class="project-date">2025 — Present</div>
+          </div>
+          <p class="project-desc">Architecting real-time management interfaces for a multi-tenant proxy platform, optimizing API latency and analytics visibility.</p>
+          <ul class="project-list">
+            <li>Engineered tenant management interfaces for dynamic proxy routing, cache warming, dynamic rate limits, and key administration.</li>
+            <li>Designed high-density analytics dashboards with Recharts & Axios to track bandwidth savings and cache hit/miss metrics.</li>
+            <li>Integrated Socket.IO subscriptions for instantaneous latency alerts and streaming service health status.</li>
+          </ul>
+          <div class="project-footer">
+            <div class="tags">
+              <span class="tag">Next.js</span> <span class="tag">TypeScript</span> <span class="tag">Tailwind CSS</span> <span class="tag">Socket.IO</span>
+            </div>
+            <div class="project-actions">
+              <a class="project-btn" href="https://github.com/theogvikas/api-cache-proxy" target="_blank" rel="noopener">Live Demo ↗</a>
+              <a class="project-btn" href="https://github.com/theogvikas/api-cache-proxy" target="_blank" rel="noopener">View Source ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card project tilt-card">
+          <div class="project-head">
+            <h3 class="project-title">Reddit Architecture Clone</h3>
+            <div class="project-date">2025</div>
+          </div>
+          <p class="project-desc">A full-featured social platform built to showcase dynamic client-side state handling, UI component hierarchies, and asynchronous feeds.</p>
+          <ul class="project-list">
+            <li>Built responsive client interfaces replicating community feeds, nested voting, and comment workflows with React and Tailwind CSS.</li>
+            <li>Structured scalable REST backend with Node.js, Express, and MongoDB featuring user sessions and Cloudinary image integration.</li>
+          </ul>
+          <div class="project-footer">
+            <div class="tags">
+              <span class="tag">React</span> <span class="tag">Node.js</span> <span class="tag">Express</span> <span class="tag">MongoDB</span> <span class="tag">Redux</span>
+            </div>
+            <div class="project-actions">
+              <a class="project-btn" href="https://github.com/theogvikas/Reddit-Frontend" target="_blank" rel="noopener">Frontend Demo ↗</a>
+              <a class="project-btn" href="https://github.com/theogvikas/Reddit-Backend" target="_blank" rel="noopener">Backend API ↗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="credentials">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="text-mask"><h2 class="reveal-text">Verified Credentials</h2></span>
+          <span class="sec-num">04 / CERTIFICATIONS</span>
+        </div>
+        <div class="two-col">
+          <div class="glass-card card-content tilt-card">
+            <div class="card-eyebrow">HACKERRANK CERTIFIED</div>
+            <h3>JavaScript (Basic & Intermediate)</h3>
+            <div class="sub">HackerRank · Standardized Verification</div>
+            <p>Validated proficiency in core algorithms, complex data structures, ES6+ features, execution contexts, and asynchronous event loops.</p>
+          </div>
+          <div class="glass-card card-content tilt-card">
+            <div class="card-eyebrow">HACKERRANK CERTIFIED</div>
+            <h3>Frontend Developer (React)</h3>
+            <div class="sub">HackerRank · Standardized Verification</div>
+            <p>Demonstrated mastery in modular component architecture, dynamic state synchronization, custom hooks, and layout optimization.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="karate">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="text-mask"><h2 class="reveal-text">Martial Arts Honors & Leadership</h2></span>
+          <span class="sec-num">05 / DISTINCTION</span>
+        </div>
+        <div class="two-col">
+          <div class="glass-card card-content tilt-card">
+            <div class="card-eyebrow">ATHLETIC EXCELLENCE</div>
+            <h3>2018 Open National Karate Champion</h3>
+            <div class="sub">Gold Medalist · 1st Dan Black Belt</div>
+            <p>Achieved Open National Gold Medal distinction through years of intense training and competitive discipline. The same mindset drives my endurance during complex bug resolution and software refactoring.</p>
+          </div>
+          <div class="glass-card card-content tilt-card">
+            <div class="card-eyebrow">EXECUTIVE LEADERSHIP</div>
+            <h3>Secretary — Buxar Karate Association</h3>
+            <div class="sub">District Leadership & Athletic Administration · Buxar, Bihar</div>
+            <p>Appointed Secretary to oversee regional martial arts events, mentor upcoming athletes, and coordinate district tournaments. Demonstrating organizational management and leadership skills.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="wrap">
+        <div class="glass-card contact-box">
+          <span class="text-mask"><h2 class="reveal-text">Let's Build Something Exceptional</h2></span>
+          <p class="contact-desc">Open to full-stack engineering roles, systems architecture projects, and dynamic technical teams.</p>
+          <div class="contact-links">
+            <a class="btn-primary" href="mailto:vikaskumar98709870@gmail.com">vikaskumar98709870@gmail.com</a>
+            <a class="btn-secondary" href="https://github.com/theogvikas" target="_blank" rel="noopener">GitHub @theogvikas ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ATS Single-Page Printed Resume Container -->
+  <div id="printable-resume">
+    <div class="res-header">
+      <h1>VIKAS KUMAR</h1>
+      <div class="res-contact">
+        Buxar, Bihar, India | vikaskumar98709870@gmail.com | github.com/theogvikas
+      </div>
     </div>
+
+    <div class="res-section">
+      <h2>Professional Summary</h2>
+      <div class="res-p">
+        Full-Stack Systems Developer & Platform Engineer specializing in Next.js, Node.js, Express, TypeScript, and distributed REST architectures. Skilled in building multi-tenant API gateways, real-time telemetry, and secure proxy platforms. Open National Gold Medalist & 1st Dan Black Belt applying competitive discipline to platform engineering.
+      </div>
+    </div>
+
+    <div class="res-section">
+      <h2>Technical Capabilities</h2>
+      <div class="res-p"><strong>Backend & Systems:</strong> Node.js, Express.js, RESTful APIs, API Key Authentication, Workspace Isolation, Telemetry Logging</div>
+      <div class="res-p"><strong>Frontend & UI:</strong> Next.js (App Router), React.js, TypeScript, JavaScript (ES6+), Tailwind CSS</div>
+      <div class="res-p"><strong>Tools & Deployment:</strong> Vercel, Render, Git, GitHub, Socket.IO, MongoDB, Recharts</div>
+    </div>
+
+    <div class="res-section">
+      <h2>Technical Projects</h2>
+      
+      <div class="res-item-head">
+        <span>Edge API Gateway</span>
+        <span>2026 – Present</span>
+      </div>
+      <div class="res-p"><em>Stack: Next.js, Node.js, Express, Tailwind CSS, REST APIs</em></div>
+      <ul class="res-list">
+        <li>Engineered a production-ready multi-tenant API gateway with a high-performance Next.js frontend (Vercel) and secure Node.js backend (Render).</li>
+        <li>Implemented header-based API key authentication, dynamic tenant workspace isolation, and real-time node health telemetry (`/api/metrics`).</li>
+        <li>Built live control panel allowing instant request inspection, latency monitoring, and multi-tenant preset routing.</li>
+      </ul>
+
+      <div class="res-item-head">
+        <span>API Cache Proxy Platform</span>
+        <span>2025 – Present</span>
+      </div>
+      <div class="res-p"><em>Stack: Next.js, TypeScript, Tailwind CSS, Socket.IO</em></div>
+      <ul class="res-list">
+        <li>Engineered tenant management interfaces for proxy routing, cache warming, dynamic rate limits, and key administration.</li>
+        <li>Built analytics interfaces using Recharts and Axios to visualize bandwidth savings and cache hit/miss metrics.</li>
+      </ul>
+
+      <div class="res-item-head">
+        <span>Reddit Full-Stack Clone</span>
+        <span>2025</span>
+      </div>
+      <div class="res-p"><em>Stack: React, Node.js, Express, MongoDB, Redux</em></div>
+      <ul class="res-list">
+        <li>Developed responsive client interfaces for community feeds and voting with React and Redux.</li>
+        <li>Built robust backend REST API featuring user sessions, Cloudinary image integration, and MongoDB database models.</li>
+      </ul>
+    </div>
+
+    <div class="res-section">
+      <h2>Education & Certifications</h2>
+      <div class="res-p"><strong>Bachelor of Computer Applications (BCA)</strong> — IGNOU (2022 – 2025)</div>
+      <div class="res-p"><strong>Certifications:</strong> HackerRank Certified Frontend Developer (React) | HackerRank JavaScript (Intermediate)</div>
+    </div>
+
+    <div class="res-section">
+      <h2>Honors & Leadership</h2>
+      <div class="res-p"><strong>Secretary — Buxar Karate Association:</strong> Executive leader directing regional events and mentorship programs.</div>
+      <div class="res-p"><strong>1st Dan Black Belt & Gold Medalist:</strong> 2018 Open National Karate Champion.</div>
+    </div>
+  </div>
+
+  <footer class="wrap">
+    <span>© 2026 Vikas Kumar</span>
+    <span>Buxar, Bihar, India</span>
+  </footer>
+
+  <script>
+    let audioCtx = null;
+    let soundEnabled = false;
+
+    function playTone(freq = 440, type = 'sine', duration = 0.05) {
+      if (!soundEnabled) return;
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function simulateArch(node) {
+      playTone(520, 'square', 0.08);
+      const output = document.getElementById('archOutput');
+      document.querySelectorAll('.arch-node').forEach(n => n.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (node === 'client') {
+        output.innerHTML = 'Status: <span style="color:var(--accent);">Next.js UI Frontend</span> ready for dispatching authenticated tenant requests.';
+      } else if (node === 'gateway') {
+        output.innerHTML = 'Status: <span style="color:var(--accent);">API Gateway Hub</span> routing traffic between Vercel edge and Render backend.';
+      } else if (node === 'auth') {
+        output.innerHTML = 'Status: <span style="color:var(--emerald);">X-API-Key Verified</span>. Tenant workspace isolated successfully.';
+      } else if (node === 'telemetry') {
+        output.innerHTML = 'Status: <span style="color:var(--accent);">/api/metrics Endpoint</span> streaming live request logs and uptime counters.';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const audioToggle = document.getElementById('audioToggle');
+      const audioIcon = document.getElementById('audioIcon');
+      if (audioToggle) {
+        audioToggle.addEventListener('click', () => {
+          soundEnabled = !soundEnabled;
+          audioIcon.textContent = soundEnabled ? '🔊' : '🔇';
+          if (soundEnabled) playTone(880, 'sine', 0.1);
+        });
+      }
+
+      const modeToggle = document.getElementById('modeToggle');
+      const modeIcon = document.getElementById('modeIcon');
+      const modeText = document.getElementById('modeText');
+      const heroHeading = document.getElementById('heroHeading');
+      let isCombat = false;
+
+      if (modeToggle) {
+        modeToggle.addEventListener('click', () => {
+          isCombat = !isCombat;
+          document.body.classList.toggle('combat-mode', isCombat);
+          playTone(isCombat ? 220 : 660, 'sawtooth', 0.12);
+
+          if (isCombat) {
+            modeIcon.textContent = '🥋';
+            modeText.textContent = 'Combat Mode';
+            heroHeading.innerHTML = 'Relentless focus meets <em>championship execution.</em>';
+          } else {
+            modeIcon.textContent = '⚡';
+            modeText.textContent = 'Code Mode';
+            heroHeading.innerHTML = 'Precision engineering meets <em>athletic discipline.</em>';
+          }
+        });
+      }
+
+      const cursorDot = document.getElementById('cursorDot');
+      const cursorOutline = document.getElementById('cursorOutline');
+
+      if (window.innerWidth > 900 && cursorDot && cursorOutline) {
+        window.addEventListener('mousemove', (e) => {
+          const { clientX: x, clientY: y } = e;
+          cursorDot.style.left = `${x}px`;
+          cursorDot.style.top = `${y}px`;
+          cursorOutline.animate({ left: `${x}px`, top: `${y}px` }, { duration: 400, fill: "forwards" });
+        });
+
+        document.querySelectorAll('a, button, input, .tilt-card').forEach(el => {
+          el.addEventListener('mouseenter', () => {
+            document.body.classList.add('hovering');
+            playTone(400, 'sine', 0.03);
+          });
+          el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+      }
+
+      const canvas = document.getElementById('webgl-bg');
+      if (canvas && typeof THREE !== 'undefined') {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const count = window.innerWidth < 768 ? 250 : 500;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(count * 3);
+
+        for (let i = 0; i < count * 3; i++) {
+          positions[i] = (Math.random() - 0.5) * 14;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const material = new THREE.PointsMaterial({
+          size: 0.04, color: 0xE5A93C, transparent: true, opacity: 0.6
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        camera.position.z = 5;
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+          mouseX = (e.clientX / window.innerWidth - 0.5) * 0.8;
+          mouseY = (e.clientY / window.innerHeight - 0.5) * 0.8;
+        });
+
+        function animateWebGL() {
+          requestAnimationFrame(animateWebGL);
+          particles.rotation.y += 0.0008;
+          particles.rotation.x += 0.0003;
+
+          if (isCombat) material.color.setHex(0xEF4444);
+          else material.color.setHex(0xE5A93C);
+
+          camera.position.x += (mouseX - camera.position.x) * 0.04;
+          camera.position.y += (-mouseY - camera.position.y) * 0.04;
+
+          renderer.render(scene, camera);
+        }
+        animateWebGL();
+      }
+
+      if (window.innerWidth > 900 && typeof Lenis !== 'undefined') {
+        const lenis = new Lenis({ duration: 1.2, smoothWheel: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+      }
+
+      const termBody = document.getElementById('termBody');
+      const termLogs = document.getElementById('termLogs');
+
+      if (termBody) {
+        termBody.addEventListener('keydown', (e) => {
+          if (e.target && e.target.id === 'termInput' && e.key === 'Enter') {
+            playTone(600, 'square', 0.04);
+            const inputEl = e.target;
+            const val = inputEl.value.trim().toLowerCase();
+
+            if (val === 'github' || val === 'stats') {
+              const logDiv = document.createElement('div');
+              logDiv.className = 'term-line';
+              logDiv.innerHTML = `&gt; ${val}<br><span style="color:var(--ink-soft);">Fetching live telemetry from GitHub API...</span>`;
+              if (termLogs) termLogs.appendChild(logDiv);
+              
+              fetch('https://api.github.com/users/theogvikas')
+                .then(res => res.json())
+                .then(data => {
+                  const resDiv = document.createElement('div');
+                  resDiv.className = 'term-line';
+                  resDiv.innerHTML = `
+                    <span style="color:var(--emerald);">[API Response]</span> Profile: @${data.login}<br>
+                    • Public Repos: <span class="accent-text">${data.public_repos || 'N/A'}</span><br>
+                    • Followers: <span class="accent-text">${data.followers || 'N/A'}</span><br>
+                    • Location: <span class="accent-text">${data.location || 'Buxar, India'}</span>
+                  `;
+                  if (termLogs) termLogs.appendChild(resDiv);
+                  termBody.scrollTop = termBody.scrollHeight;
+                })
+                .catch(() => {
+                  const errDiv = document.createElement('div');
+                  errDiv.className = 'term-line';
+                  errDiv.innerHTML = `<span style="color:#FF5F56;">Profile link: https://github.com/theogvikas</span>`;
+                  if (termLogs) termLogs.appendChild(errDiv);
+                });
+              
+              inputEl.value = '';
+              return;
+            }
+
+            let reply = '';
+            if (val === 'help') {
+              reply = 'Commands: <span class="accent-text">github</span>, <span class="accent-text">skills</span>, <span class="accent-text">karate</span>, <span class="accent-text">clear</span>';
+            } else if (val === 'skills') {
+              reply = 'Stack: Next.js, Node.js, Express, TypeScript, Tailwind, REST APIs';
+            } else if (val === 'karate') {
+              reply = 'Black Belt (1st Dan) | 2018 Open National Gold Medalist | Secretary, Buxar Karate Association';
+            } else if (val === 'clear') {
+              if (termLogs) termLogs.innerHTML = '';
+              inputEl.value = '';
+              return;
+            } else {
+              reply = `Command not recognized: "${val}". Type <span class="accent-text">help</span>.`;
+            }
+
+            const newDiv = document.createElement('div');
+            newDiv.className = 'term-line';
+            newDiv.innerHTML = `&gt; ${val}<br><span style="color:var(--ink);">${reply}</span>`;
+            if (termLogs) termLogs.appendChild(newDiv);
+            inputEl.value = '';
+            termBody.scrollTop = termBody.scrollHeight;
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
